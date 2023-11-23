@@ -6,8 +6,12 @@ router.get('/', (req, res) => {
     res.send("Bruh it's api")
 })
 
-router.post('/family', (req, res) => {
-    familyController.family_create(req, res)
+router.post('/family', async (req, res) => {
+    await familyController.family_create(req, res)
+})
+
+router.delete('/family', async (req, res) => {
+    await familyController.family_delete(req, res)
 })
 
 module.exports = router;
