@@ -1,11 +1,31 @@
 var family = require('../models/family')
+var crypto = require('crypto')
+const jwt = require("jsonwebtoken");
+const luxon = require("luxon");1
+require('dotenv').config()
 
 exports.family_create = async (req, res) => {
-    let fam = await family.create(req.body)
-    fam.$errors === undefined ? res.send(fam._doc) : res.status(400).send(fam.$errors)
+    let fam = await family.create({
+        login: req.body.login,
+        pass: crypto.createHash('sha256').update(req.body.pass + process.env.SALT).digest('hex'),
+        name: req.body.name
+    })
+    fam.$errors === undefined ? res.json({ user: {
+            id: fam._id,
+            login: fam.login,
+            token: jwt.sign({
+                login: fam.login,
+                id: fam._id,
+                exp: luxon.DateTime.now().plus({hours: 1}).toUnixInteger()
+            }, process.env.JWT_SECRET)
+        } }) : res.status(400).send(fam.$errors)
 }
 
 exports.family_delete = async (req, res) => {
     let fam = await family.findOneAndDelete(req.body.name)
     fam.$errors === undefined ? res.status(204).send() : res.status(400).send(fam.$errors)
+}
+
+exports.family_findOne = async (data) => {
+    return family.findOne(data)
 }

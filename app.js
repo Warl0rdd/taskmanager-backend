@@ -3,10 +3,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose')
+var passport = require('passport')
+require('dotenv').config()
 
-const mongo_url = "mongodb://taskmanager:R4Z3p0ErmaK_@localhost:27017/taskmanager"
+require('./config/auth')
 
-var apiRouter = require('./routes/api');
+var apiRouter = require('./routes/api/familyApi');
 
 var app = express();
 
@@ -16,11 +18,11 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-mongoose.connect(mongo_url)
+
+app.use('/api/family', apiRouter)
+
+mongoose.connect(process.env.MONGO_URL)
     .catch(err => console.log(`Ou fak mazafaka error: ${err}`))
     .then(() => console.log("Vse ok"))
-
-app.use('/api', apiRouter);
 
 module.exports = app;
