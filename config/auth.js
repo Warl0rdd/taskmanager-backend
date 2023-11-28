@@ -9,7 +9,7 @@ passport.use(new JwtStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.JWT_SECRET
 }, (jwtPayload, done) => {
-    return FamilyController.family_findOneById(jwtPayload.sub)
+    return FamilyController.familyFindOneById(jwtPayload.sub)
         .then((user) => {
             if (!user) {
                 return done("User not found!", false)

@@ -5,7 +5,7 @@ const luxon = require("luxon");
 const utils = require("../utils")
 require('dotenv').config()
 
-exports.family_create = async (req, res) => {
+exports.familyCreate = async (req, res) => {
     let fam = await family.create({
         login: req.body.login,
         pass: crypto.createHash('sha256').update(req.body.pass + process.env.SALT).digest('hex'),
@@ -14,15 +14,19 @@ exports.family_create = async (req, res) => {
     fam.$errors === undefined ? res.json(utils.JWTForAuth(fam)) : res.status(400).send(fam.$errors)
 }
 
-exports.family_delete = async (req, res) => {
-    let fam = await family.findOneAndDelete(req.body.name)
-    fam.$errors === undefined ? res.status(204).send() : res.status(400).send(fam.$errors)
+exports.familyDeleteById = async (id) => {
+    return Family.findOneAndDelete({id: id})
 }
 
-exports.family_findOneById = async (id) => {
+exports.familyFindOneById = async (id) => {
     return family.findOne({id: id})
 }
 
-exports.family_findOneByLogin = async (login) => {
+exports.familyFindOneByLogin = async (login) => {
     return family.findOne({login: login})
 }
+
+exports.familyUpdate = async (id, data) => {
+    let fam = family.findOneAndUpdate(id, data)
+}
+
