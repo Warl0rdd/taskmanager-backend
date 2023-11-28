@@ -30,11 +30,6 @@ var FamilySchema = new Schema({
     }]
 })
 
-FamilySchema.methods.validatePassword = (pass) => {
-    const hashed = crypto.createHash('sha256').update(pass + process.env.SALT).digest('hex')
-    return hashed === this.pass
-}
-
 FamilySchema.plugin(uniqueValidator)
 
 module.exports = mongoose.model("Family", FamilySchema)
